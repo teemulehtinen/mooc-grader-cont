@@ -1,0 +1,4 @@
+__pycache__/
+mgcont.egg-info/
+dist/
+submission_tmp/
