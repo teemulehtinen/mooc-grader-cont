@@ -9,7 +9,6 @@ from .docker_run import run as run_docker_container
 from .paths import scan_file_paths, search_upwards
 from .submission_dir import build_submission_dir
 
-TMP_DIR = 'submission_tmp'
 RUN_FUNC = run_docker_container
 CONFIG_LOADERS = {
   '.json': json.load,
@@ -41,6 +40,12 @@ def main():
   parser.add_argument('--dir', help='A directory including the files to submit')
   parser.add_argument('--debug', action='store_true', default=False,
     help='Run a debug shell instead of the configured grading command')
+  parser.add_argument('--network', default='mgcont',
+    help='A network setting for docker run, e.g. mgcont (named docker network)')
+  parser.add_argument('--rec', default='http://debugger:5000',
+    help='An URL to the host to receive grading, e.g. http://debugger:5000')
+  parser.add_argument('--grade-dir', default='./submission_tmp',
+    help='A path where the grading mount is created, e.g. ./submission_tmp')
   args = parser.parse_args()
   
   # Handle arguments
@@ -59,7 +64,7 @@ def main():
     files.extend(scan_file_paths(args.dir))
 
   # Construct submission-directory
-  missing = build_submission_dir(TMP_DIR, config, values, files)
+  missing = build_submission_dir(args.grade_dir, config, values, files)
   if missing:
     print(f'Warning, following configured values are missing: {" ".join(missing)}')
 
@@ -70,17 +75,19 @@ def main():
     if root_path is None:
       exit(f'Failed to find a root directory containing the configuration and the "mount" directory')
     ex, out, err = create_container(
-      host_url='http://127.0.0.1:3215',
+      host_url=args.rec,
       root_path=root_path,
       course={},
       exercise=config,
-      submission_id='debug_submission',
-      dir_path=TMP_DIR,
+      submission_id='debugsubmission',
+      dir_path=os.path.abspath(args.grade_dir),
       run_func=RUN_FUNC,
-      run_settings={'debug_mode': args.debug}
+      run_settings={'network': args.network, 'debug_mode': args.debug}
     )
     if ex == 0:
       name = out.split(' - ')[1]
       print(name)
+    else:
+      exit(f'Failed to run container:\n{err}')
   except ContainerError as e:
     exit(e.message)

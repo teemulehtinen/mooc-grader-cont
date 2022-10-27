@@ -1,10 +1,7 @@
 import json
 import os
 import shutil
-
-def remove_submission_dir(dir_path):
-  if os.path.isdir(dir_path):
-    shutil.rmtree(dir_path)
+import docker
 
 def write_text_file(dir_path, file_name, content):
   with open(os.path.join(dir_path, file_name), 'w') as f:
@@ -14,7 +11,6 @@ def write_text_file(dir_path, file_name, content):
       f.write(str(content))
 
 def build_submission_dir(dir_path, config, values, file_paths):
-  remove_submission_dir(dir_path)
   os.makedirs(dir_path)
   filled = set()
 
