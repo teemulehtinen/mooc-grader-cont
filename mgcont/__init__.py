@@ -1,5 +1,4 @@
 import argparse
-from genericpath import isdir
 import json
 import os
 import sys
