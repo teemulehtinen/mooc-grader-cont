@@ -67,16 +67,20 @@ def run(
     container = docker_client.containers.run(
       image,
       '/bin/bash' if debug_mode else cmd,
-      network = network,
-      remove = True,
-      detach = True,
-      stdin_open = debug_mode,
-      tty = debug_mode,
-      environment = {'SID': submission_id, 'REC': host_url},
-      volumes = volumes,
+      network=network,
+      remove=True,
+      detach=True,
+      stdin_open=debug_mode,
+      tty=debug_mode,
+      environment={'SID': submission_id, 'REC': host_url},
+      volumes=volumes,
     )
     if debug_mode:
-      logger.warning(f'Running debug bash, configured cmd: {cmd}')
+      logger.warning(
+        'Running debug shell instead of the configured cmd. Attach to it with docker.\n'
+        f'  cmd:     {cmd}\n'
+        f'  shell:   docker attach {container.name}'
+      )
     return 0, f'{", ".join(container.image.tags)} - {container.name} - {container.short_id}', ''
   except Exception as e:
       logger.exception('An exception while trying to run grading container')

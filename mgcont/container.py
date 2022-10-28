@@ -48,9 +48,6 @@ def create_container(
   run_func,
   run_settings
 ):
-  """
-  Create a 
-  """
   config = exercise['container']
   ro_mounts = config.get('mounts', {}).copy()
   ro_mounts[config['mount']] = '/exercise'
