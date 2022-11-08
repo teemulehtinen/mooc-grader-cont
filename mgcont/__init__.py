@@ -47,10 +47,8 @@ def main():
   parser.add_argument('-c', '--config', help='a mooc-grader exercise configuration yaml/json')
   parser.add_argument('-f', '--file', nargs='+', help='a file to submit')
   parser.add_argument('-d', '--dir', help='a directory including the files to submit')
-  parser.add_argument('--values', help=(
-    'a yaml/json file to use as posted values, '
-    '"meta" can be defined to simulate server provided meta-data'
-  ))
+  parser.add_argument('--values',
+    help='a yaml/json file to use as posted values or file contents')
   parser.add_argument('--debug', action='store_true', default=False,
     help='run a debug shell instead of the configured grading command')
   args = parser.parse_args()
@@ -78,7 +76,7 @@ def main():
   if not isinstance(values, dict):
     exit(f'Values must be declared as an object.')
   files = []
-  for f in args.file:
+  for f in args.file or []:
     if not os.path.isfile(f):
       exit(f'No such file found: {f}')
     files.append(f)

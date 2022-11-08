@@ -36,8 +36,8 @@ from PyPi.
       -f FILE [FILE ...], --file FILE [FILE ...]
                             a file to submit
       -d DIR, --dir DIR     a directory including the files to submit
-      --values VALUES       a yaml/json file to use as posted values, "meta" can
-                            be defined to simulate server provided meta-data
+      --values VALUES       a yaml/json file to use as posted values or file
+                            contents
       --debug               run a debug shell instead of the configured grading
                             command
 
